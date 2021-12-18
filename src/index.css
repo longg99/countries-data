@@ -7,27 +7,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* use the Noto Color Emoji font - https://github.com/googlefonts/noto-emoji - to show the flag emoji */
+@font-face {
+  font-family: NotoColorEmoji;
+  src: url("./Resources/Fonts/NotoColorEmoji.ttf") format("truetype");
+}
+
+.flag {
+  /* use the Noto Color Emoji font - https://github.com/googlefonts/noto-emoji - to show the flag emoji */
+  font-family: "NotoColorEmoji";
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
-}
-
-.App {
-  display: flex;
-  font-size: 20;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.countryInfo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.data {
-  display: flex;
-  flex-direction: column;
 }

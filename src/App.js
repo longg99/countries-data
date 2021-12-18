@@ -5,7 +5,18 @@ import {
   getAllCountries,
   getCountryInfo,
 } from "./Components/apis";
-import _ from "lodash";
+import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import { Container, Typography } from "@mui/material";
+// import Accordion from "@mui/material/Accordion";
+// import AccordionSummary from "@mui/material/AccordionSummary";
+// import AccordionDetails from "@mui/material/AccordionDetails";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function App() {
   // the list of countries
@@ -72,19 +83,6 @@ function App() {
     if (loadingCountry) return <div>Data is loading...</div>;
   };
 
-  const changeCountry = (e) => {
-    setSelectedCountry(e.target.value);
-    setSelectedCountryISO2(
-      e.target[e.target.selectedIndex].getAttribute("data-iso2")
-    );
-    setLoadingState(true);
-  };
-
-  const renderSelected = () => {
-    if (selectedCountry !== "")
-      return <div>User has selected {selectedCountry}</div>;
-  };
-
   const renderLoadingStates = () => {
     // if loading and user has selected a country
     if (loadingState && selectedCountry !== "") {
@@ -96,45 +94,44 @@ function App() {
     }
   };
 
-  const renderStates = () => {
-    if (!loadingState) {
-      return (
-        <div className="states">
-          List of states/major cities:
-          <ul>
-            {states.map((state) => {
-              return <li key={state["id"]}>{state["name"]}</li>;
-            })}
-          </ul>
-        </div>
-      );
-    }
-  };
-
-  const renderSelectCountry = () => {
+  // render the search box
+  const renderSearchCountry = () => {
     if (!loadingCountry) {
       return (
         <div>
-          <label htmlFor="countries"> Select a country: </label>
-          <select
-            name="countries"
-            id="countries"
-            onChange={(e) => changeCountry(e)}
-            defaultValue=""
-          >
-            <option value="" disabled hidden></option>
-            {countries.map((country) => {
-              return (
-                <option
-                  key={country["id"]}
-                  value={country["name"]}
-                  data-iso2={country["iso2"]}
-                >
-                  {country["name"]}
-                </option>
-              );
-            })}
-          </select>
+          <Typography variant="h5" marginBottom="1vh" textAlign="center">
+            Hi there! Please enter or choose a country to begin.
+          </Typography>
+          <Autocomplete
+            id="country-select-demo"
+            onChange={(event, newCountry) => {
+              if (newCountry != null) {
+                // set the new country's data
+                setSelectedCountry(newCountry.name);
+                setSelectedCountryISO2(newCountry.iso2);
+                // show loading text
+                setLoadingState(true);
+              }
+            }}
+            options={countries}
+            autoHighlight
+            getOptionLabel={(option) => option.name}
+            renderOption={(props, option) => (
+              <Box component="li" {...props}>
+                {option.name}
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Choose a country"
+                inputProps={{
+                  ...params.inputProps,
+                  autoComplete: "off", // disable autocomplete and autofill
+                }}
+              />
+            )}
+          />
         </div>
       );
     }
@@ -142,31 +139,90 @@ function App() {
 
   // render the info for a given country
   const renderCountryInfo = () => {
-    if (!loadingState) {
+    if (!loadingState && selectedCountry !== "") {
       return (
-        <div className="countryInfo">
-          <p>Name: {countryInfo.name}</p>
-          <p>Native name: {countryInfo.native}</p>
-          <p>Phone code: {"+" + countryInfo.phonecode}</p>
-          <p>Region: {countryInfo.subregion}</p>
-          <p>Capital: {countryInfo.capital}</p>
-          <p>Currency: {countryInfo.currency}</p>
-        </div>
+        <Box>
+          <Typography
+            variant="h5"
+            marginTop="1vh"
+            marginBottom="1vh"
+            textAlign="center"
+          >
+            {selectedCountry}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10vw",
+            }}
+          >
+            <Box>
+              <Box sx={{ fontWeight: "medium" }}>Country Information:</Box>
+              <p>
+                <span className="flag">{countryInfo.emoji}</span> Name:{" "}
+                {countryInfo.name}{" "}
+              </p>
+              <p>
+                <span className="flag">{countryInfo.emoji}</span> Native name:{" "}
+                {countryInfo.native}
+              </p>
+              <p>☎️ Phone code: {"+" + countryInfo.phonecode}</p>
+              <p>🌎 Region: {countryInfo.subregion}</p>
+              <p>🏙️ Capital: {countryInfo.capital}</p>
+              <p>💳 Currency: {countryInfo.currency}</p>
+            </Box>
+
+            <Box>
+              <Box sx={{ fontWeight: "medium" }}>
+                List of states/major cities:
+                <Box sx={{ typography: "subtitle2" }}>
+                  Click on a state to see its cities.
+                </Box>
+              </Box>
+              <Box sx={{ maxHeight: "60vh", overflowY: "scroll" }}>
+                {states.map((state) => {
+                  return (
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                      >
+                        <Typography>{state["name"]}</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Typography key={state["id"]}></Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  );
+                })}
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       );
     }
   };
 
   return (
-    <div className="App">
-      {renderLoadingCountry()}
-      {renderSelectCountry()}
-      <div className="data">
-        {renderSelected()}
+    <Container>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          fontWeight: "light",
+          fontSize: 18,
+        }}
+      >
+        {renderLoadingCountry()}
+        {renderSearchCountry()}
+
         {renderLoadingStates()}
-        {renderStates()}
         {renderCountryInfo()}
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 }
 

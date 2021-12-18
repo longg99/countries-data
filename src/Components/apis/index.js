@@ -12,6 +12,7 @@ const options = {
 export const getAllCountries = async () =>
   // pass the option param
   await axios.get("https://api.countrystatecity.in/v1/countries", options);
+// await axios.get("https://restcountries.com/v3.1/all")
 
 // get all states, given a country
 export const getAllStates = async (country) =>
@@ -28,3 +29,5 @@ export const getCountryInfo = async (country) =>
     `https://api.countrystatecity.in/v1/countries/${country}`,
     options
   );
+
+// get all cities based on a given province
