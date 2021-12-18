@@ -1,7 +1,7 @@
 {
   "name": "countries-data",
   "version": "0.1.0",
-  "homepage": "http://longg99.github.io/countries-data",
+  "homepage": "https://longg99.github.io/countries-data",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
