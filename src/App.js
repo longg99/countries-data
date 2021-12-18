@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./index.css";
 import {
   getAllStates,
@@ -22,6 +22,10 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Stack from "@mui/material/Stack";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import IconButton from "@mui/material/IconButton";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 function App() {
   // the list of countries
@@ -38,6 +42,27 @@ function App() {
   const [countryInfo, setCountryInfo] = useState({});
   // user's selected ISO2
   const [selectedCountryISO2, setSelectedCountryISO2] = useState("");
+  // for dark/light mode
+  const [mode, setMode] = useState("light");
+
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+      },
+    }),
+    []
+  );
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+      }),
+    [mode]
+  );
 
   // call API upon load
   useEffect(() => {
@@ -135,15 +160,11 @@ function App() {
   const renderSearchCountry = () => {
     if (!loadingCountry) {
       return (
-        <div>
-          <Typography
-            variant="h5"
-            marginBottom="3vh"
-            marginTop="3vh"
-            textAlign="center"
-          >
+        <Box>
+          <Typography variant="h5" marginBottom="3vh" textAlign="center">
             Hi there! Please enter or choose a country to begin.
           </Typography>
+
           <Autocomplete
             id="country-select-demo"
             onChange={(event, newCountry) => {
@@ -174,7 +195,7 @@ function App() {
               />
             )}
           />
-        </div>
+        </Box>
       );
     }
   };
@@ -276,7 +297,7 @@ function App() {
               <p>🚗 Driving side: {countryInfo.car.side}</p>
               <p>📅 First day of week: {countryInfo.startOfWeek}</p>
             </Grid>
-            {console.log(states)}
+
             <Grid item md={3} sm={6} xs={12}>
               <Box sx={{ fontWeight: "medium" }} marginBottom="1vh">
                 States/Major Cities:
@@ -289,9 +310,13 @@ function App() {
                 >
                   <Typography>List of states</Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails
+                  sx={{ maxHeight: "52vh", overflowY: "scroll" }}
+                >
                   {states.map((state) => (
-                    <Box key={state.id}>{state.name}</Box>
+                    <Box sx={{ fontWeight: "medium" }} key={state.id}>
+                      {state.name}
+                    </Box>
                   ))}
                 </AccordionDetails>
               </Accordion>
@@ -310,9 +335,13 @@ function App() {
                 >
                   <Typography>List of cities</Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails
+                  sx={{ maxHeight: "52vh", overflowY: "scroll" }}
+                >
                   {cities.map((city) => (
-                    <Box key={city.id}>{city.name}</Box>
+                    <Box sx={{ fontWeight: "medium" }} key={city.id}>
+                      {city.name}
+                    </Box>
                   ))}
                 </AccordionDetails>
               </Accordion>
@@ -324,23 +353,46 @@ function App() {
   };
 
   return (
-    <Container>
+    <ThemeProvider theme={theme}>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          fontWeight: "light",
-          fontSize: 18,
+          width: "100%",
+          minHeight: "100vh",
+          overflow: "hidden",
+          bgcolor: "background.default",
+          color: "text.primary",
         }}
       >
-        {renderLoadingCountry()}
-        {renderSearchCountry()}
+        <IconButton
+          sx={{ ml: 2 }}
+          onClick={colorMode.toggleColorMode}
+          color="inherit"
+        >
+          {theme.palette.mode === "dark" ? (
+            <Brightness7Icon />
+          ) : (
+            <Brightness4Icon />
+          )}
+        </IconButton>
 
-        {renderLoadingStates()}
-        {renderCountryInfo()}
+        <Container>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              fontWeight: "light",
+              fontSize: 18,
+            }}
+          >
+            {renderLoadingCountry()}
+            {renderSearchCountry()}
+            {renderLoadingStates()}
+            {renderCountryInfo()}
+          </Box>
+        </Container>
       </Box>
-    </Container>
+    </ThemeProvider>
   );
 }
 
