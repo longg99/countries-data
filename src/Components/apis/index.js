@@ -4,7 +4,7 @@ import axios from "axios";
 const options = {
   headers: {
     // the API key
-    "X-CSCAPI-KEY": "ZkpHNldxY29GOTVucTNmQTFrVVFuSDU4cE9qenRwOVpRRThYTDMwQw==",
+    "X-CSCAPI-KEY": process.env.REACT_APP_COUNTRY_API_KEY,
   },
   redirect: "follow",
 };
