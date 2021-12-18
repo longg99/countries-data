@@ -22,3 +22,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+img {
+  width: 25vw;
+  height: 20vh;
+}

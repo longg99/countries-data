@@ -4,19 +4,24 @@ import {
   getAllStates,
   getAllCountries,
   getCountryInfo,
+  getAllCities,
 } from "./Components/apis";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { Container, Typography } from "@mui/material";
-// import Accordion from "@mui/material/Accordion";
-// import AccordionSummary from "@mui/material/AccordionSummary";
-// import AccordionDetails from "@mui/material/AccordionDetails";
-// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import CardActions from "@mui/material/CardActions";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import LinearProgress from "@mui/material/LinearProgress";
+import Stack from "@mui/material/Stack";
 
 function App() {
   // the list of countries
@@ -26,7 +31,7 @@ function App() {
   const [loadingState, setLoadingState] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState("");
   // the list of cities
-  // const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState([]);
   // the list of states
   const [states, setStates] = useState([]);
   // the information of a given country
@@ -65,11 +70,24 @@ function App() {
         }
       );
 
+      // get all cities
+      getAllCities(selectedCountryISO2).then(
+        (response) => {
+          console.log("cities response: ", response);
+          setCities(response.data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+
       // get request for country's data
       getCountryInfo(selectedCountryISO2).then(
         (response) => {
           console.log("country info: ", response);
-          setCountryInfo(response.data);
+          // the data is returned as an array with 1 elem, assign the first elem as
+          // the obj to the countryInfo
+          setCountryInfo(response.data[0]);
         },
         (error) => {
           console.log(error);
@@ -80,16 +98,35 @@ function App() {
 
   // render the loading text
   const renderLoadingCountry = () => {
-    if (loadingCountry) return <div>Data is loading...</div>;
+    if (loadingCountry)
+      return (
+        <Stack
+          sx={{ color: "grey.500" }}
+          spacing={2}
+          direction="row"
+          marginTop="3vh"
+        >
+          <LinearProgress />
+          <Typography>Please wait, country data is loading...</Typography>
+        </Stack>
+      );
   };
 
   const renderLoadingStates = () => {
     // if loading and user has selected a country
     if (loadingState && selectedCountry !== "") {
       return (
-        <div>
-          Loading the list of states/major cities for {selectedCountry}...
-        </div>
+        <Stack
+          sx={{ color: "grey.500" }}
+          spacing={2}
+          direction="column"
+          marginTop="3vh"
+        >
+          <LinearProgress />
+          <Typography>
+            Please wait, loading the information for {selectedCountry}...
+          </Typography>
+        </Stack>
       );
     }
   };
@@ -99,7 +136,12 @@ function App() {
     if (!loadingCountry) {
       return (
         <div>
-          <Typography variant="h5" marginBottom="1vh" textAlign="center">
+          <Typography
+            variant="h5"
+            marginBottom="3vh"
+            marginTop="3vh"
+            textAlign="center"
+          >
             Hi there! Please enter or choose a country to begin.
           </Typography>
           <Autocomplete
@@ -108,7 +150,7 @@ function App() {
               if (newCountry != null) {
                 // set the new country's data
                 setSelectedCountry(newCountry.name);
-                setSelectedCountryISO2(newCountry.iso2);
+                setSelectedCountryISO2(newCountry.alpha2Code);
                 // show loading text
                 setLoadingState(true);
               }
@@ -140,67 +182,143 @@ function App() {
   // render the info for a given country
   const renderCountryInfo = () => {
     if (!loadingState && selectedCountry !== "") {
+      const commonName =
+        countryInfo.name.nativeName[Object.keys(countryInfo.name.nativeName)[0]]
+          .common;
+      const commonOfficial =
+        countryInfo.name.nativeName[Object.keys(countryInfo.name.nativeName)[0]]
+          .official;
+      const flagImg = countryInfo.flags.svg;
+      // all languages of that country
+      const languages = [];
+      for (const language in countryInfo.languages) {
+        languages.push(countryInfo.languages[language]);
+      }
+      // if suffixes are too long, only need root
+      const phoneCode =
+        countryInfo.idd.suffixes.length < 3
+          ? countryInfo.idd.root + countryInfo.idd.suffixes.join("")
+          : countryInfo.idd.root;
+
       return (
-        <Box>
-          <Typography
-            variant="h5"
-            marginTop="1vh"
-            marginBottom="1vh"
-            textAlign="center"
-          >
-            {selectedCountry}
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10vw",
-            }}
-          >
-            <Box>
+        <Grid container spacing={0} alignItems="center" justifyContent="center">
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Typography
+              variant="h4"
+              marginTop="3vh"
+              marginBottom="3vh"
+              textAlign="center"
+            >
+              {countryInfo.name.official}{" "}
+              <span className="flag">{countryInfo.flag}</span>
+            </Typography>
+          </Grid>
+          <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item md={3} sm={6} xs={12} marginBottom="2vh">
+              <Card sx={{ maxWidth: 345 }}>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={flagImg}
+                  alt={countryInfo.name.official + " flag"}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {countryInfo.name.official}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    variant="contained"
+                    href={countryInfo.maps.googleMaps}
+                    target="_blank"
+                  >
+                    See on Google Maps
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item md={3} sm={6} xs={12}>
               <Box sx={{ fontWeight: "medium" }}>Country Information:</Box>
               <p>
-                <span className="flag">{countryInfo.emoji}</span> Name:{" "}
-                {countryInfo.name}{" "}
+                <span className="flag">{countryInfo.flag}</span> Official Name:{" "}
+                {countryInfo.name.official}{" "}
               </p>
               <p>
-                <span className="flag">{countryInfo.emoji}</span> Native name:{" "}
-                {countryInfo.native}
+                <span className="flag">{countryInfo.flag}</span> Native name:{" "}
+                {commonName}
               </p>
-              <p>☎️ Phone code: {"+" + countryInfo.phonecode}</p>
-              <p>🌎 Region: {countryInfo.subregion}</p>
-              <p>🏙️ Capital: {countryInfo.capital}</p>
-              <p>💳 Currency: {countryInfo.currency}</p>
-            </Box>
+              <p>
+                <span className="flag">{countryInfo.flag}</span> Native official
+                name: {commonOfficial}
+              </p>
 
-            <Box>
-              <Box sx={{ fontWeight: "medium" }}>
-                List of states/major cities:
-                <Box sx={{ typography: "subtitle2" }}>
-                  Click on a state to see its cities.
+              <p>🌎 Region: {countryInfo.region}</p>
+              <p>🌎 Sub Region: {countryInfo.subregion}</p>
+              <p>🏙️ Capital: {countryInfo.capital[0]}</p>
+              <p>
+                🧑🏼‍🤝‍🧑🏾 Population:{" "}
+                {countryInfo.population
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              </p>
+              <p>🌐 Languages(s): {languages.join(", ")}</p>
+              <p>
+                💳 Currency:{" "}
+                {Object.keys(countryInfo.currencies)[0] +
+                  " (" +
+                  countryInfo.currencies[Object.keys(countryInfo.currencies)[0]]
+                    .name +
+                  ")"}
+              </p>
+              <p>☎️ Phone code: {phoneCode}</p>
+              <p>🕰️ Timezone(s): {countryInfo.timezones.join(", ")}</p>
+              <p>🚗 Driving side: {countryInfo.car.side}</p>
+              <p>📅 First day of week: {countryInfo.startOfWeek}</p>
+            </Grid>
+            {console.log(states)}
+            <Grid item md={3} sm={6} xs={12}>
+              <Box sx={{ fontWeight: "medium" }} marginBottom="1vh">
+                States/Major Cities:
+              </Box>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>List of states</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {states.map((state) => (
+                    <Box key={state.id}>{state.name}</Box>
+                  ))}
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+            <Grid item md={3} sm={6} xs={12}>
+              <Box>
+                <Box sx={{ fontWeight: "medium" }} marginBottom="1vh">
+                  All Cities:
                 </Box>
-              </Box>
-              <Box sx={{ maxHeight: "60vh", overflowY: "scroll" }}>
-                {states.map((state) => {
-                  return (
-                    <Accordion>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                      >
-                        <Typography>{state["name"]}</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography key={state["id"]}></Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                  );
-                })}
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+              </Box>{" "}
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>List of cities</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {cities.map((city) => (
+                    <Box key={city.id}>{city.name}</Box>
+                  ))}
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          </Grid>
+        </Grid>
       );
     }
   };
