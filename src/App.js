@@ -26,7 +26,11 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
 import isEmpty from "lodash";
+import { FixedSizeList } from "react-window";
 
 function App() {
   // the list of countries
@@ -201,9 +205,24 @@ function App() {
     }
   };
 
+  const Row = (props) => {
+    const item = props.data[props.index];
+    return (
+      <ListItem
+        key={props.index}
+        style={props.style}
+        component="div"
+        disablePadding
+      >
+        <ListItemButton>
+          <ListItemText primary={item.name} />
+        </ListItemButton>
+      </ListItem>
+    );
+  };
+
   // render the info for a given country
   const renderCountryInfo = () => {
-    console.log("country info: ", countryInfo);
     if (!loadingState && selectedCountry !== "") {
       const commonName =
         countryInfo.name.nativeName !== undefined
@@ -331,18 +350,17 @@ function App() {
                 >
                   <Typography>List of states</Typography>
                 </AccordionSummary>
-                <AccordionDetails
-                  sx={{
-                    maxHeight: "52vh",
-                    overflowY: "scroll",
-                    marginBottom: "3vh",
-                  }}
-                >
-                  {states.map((state) => (
-                    <Box sx={{ fontWeight: "medium" }} key={state.id}>
-                      {state.name}
-                    </Box>
-                  ))}
+                <AccordionDetails>
+                  <FixedSizeList
+                    height={400}
+                    width="100%"
+                    itemCount={states.length}
+                    itemSize={40}
+                    itemData={states}
+                    overscanCount={5}
+                  >
+                    {Row}
+                  </FixedSizeList>
                 </AccordionDetails>
               </Accordion>
             </Grid>
@@ -360,18 +378,17 @@ function App() {
                 >
                   <Typography>List of cities</Typography>
                 </AccordionSummary>
-                <AccordionDetails
-                  sx={{
-                    maxHeight: "52vh",
-                    overflowY: "scroll",
-                    marginBottom: "3vh",
-                  }}
-                >
-                  {cities.map((city) => (
-                    <Box sx={{ fontWeight: "medium" }} key={city.id}>
-                      {city.name}
-                    </Box>
-                  ))}
+                <AccordionDetails>
+                  <FixedSizeList
+                    height={400}
+                    width="100%"
+                    itemCount={cities.length}
+                    itemSize={40}
+                    itemData={cities}
+                    overscanCount={5}
+                  >
+                    {Row}
+                  </FixedSizeList>
                 </AccordionDetails>
               </Accordion>
             </Grid>
