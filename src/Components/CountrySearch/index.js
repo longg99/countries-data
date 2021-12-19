@@ -7,9 +7,10 @@ export default function CountrySearch({
   setSelectedCountry,
   setSelectedCountryISO2,
   setLoadingState,
+  error,
 }) {
-  // return null if list of country is loading
-  if (loadingCountry) return null;
+  // return null if list of country is loading or an error occurred
+  if (loadingCountry || error !== "") return null;
   return (
     <Box>
       <Typography variant="h5" marginBottom="3vh" textAlign="center">

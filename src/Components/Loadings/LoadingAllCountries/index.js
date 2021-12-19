@@ -1,7 +1,7 @@
 import { Typography, Stack, LinearProgress } from "@mui/material";
 
-export default function LoadingCountries({ loadingCountry }) {
-  if (!loadingCountry) return null;
+export default function LoadingCountries({ loadingCountry, error }) {
+  if (!loadingCountry || error !== "") return null;
   return (
     <Stack
       sx={{ color: "grey.500" }}

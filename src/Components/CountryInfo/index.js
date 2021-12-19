@@ -42,8 +42,9 @@ export default function CountryInfo({
   countryInfo,
   states,
   cities,
+  error,
 }) {
-  if (loadingState || selectedCountry === "") return null;
+  if (loadingState || selectedCountry === "" || error !== "") return null;
   const commonName =
     countryInfo.name.nativeName !== undefined
       ? countryInfo.name.nativeName[Object.keys(countryInfo.name.nativeName)[0]]

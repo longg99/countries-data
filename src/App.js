@@ -14,6 +14,7 @@ import LoadingCountryInfo from "./Components/Loadings/LoadingCountryInfo";
 import CountryInfo from "./Components/CountryInfo";
 import CountrySearch from "./Components/CountrySearch";
 import ThemeSwitch from "./Components/ThemeSwitch";
+import ErrorInfo from "./Components/ErrorInfo";
 
 function App() {
   // the list of countries
@@ -32,6 +33,8 @@ function App() {
   const [selectedCountryISO2, setSelectedCountryISO2] = useState("");
   // for dark/light mode, light by default
   const [mode, setMode] = useState("light");
+  // error caught from the APIs
+  const [error, setError] = useState("");
 
   const theme = useMemo(
     () =>
@@ -46,16 +49,16 @@ function App() {
   // call API upon load
   useEffect(() => {
     // get request
-    getAllCountries().then(
-      (response) => {
-        console.log("response: ", response);
+    getAllCountries()
+      .then((response) => {
         setCountries(response.data);
         setLoadingCountry(false);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+        // no error
+        setError("");
+      })
+      .catch((error) => {
+        setError("Sorry, something went wrong. Please try again later.");
+      });
   }, []);
 
   // call API upon receiving a country
@@ -63,40 +66,40 @@ function App() {
     // only if we have a country call this API
     if (selectedCountryISO2 !== "") {
       // get request for all states
-      getAllStates(selectedCountryISO2).then(
-        (response) => {
-          console.log("states response: ", response);
+      getAllStates(selectedCountryISO2)
+        .then((response) => {
           setStates(response.data);
           setLoadingState(false);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
+          // no error
+          setError("");
+        })
+        .catch((error) => {
+          setError("Sorry, something went wrong. Please try again later.");
+        });
 
       // get all cities
-      getAllCities(selectedCountryISO2).then(
-        (response) => {
-          console.log("cities response: ", response);
+      getAllCities(selectedCountryISO2)
+        .then((response) => {
           setCities(response.data);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
+          // no error
+          setError("");
+        })
+        .catch((error) => {
+          setError("Sorry, something went wrong. Please try again later.");
+        });
 
       // get request for country's data
-      getCountryInfo(selectedCountryISO2).then(
-        (response) => {
-          console.log("country info: ", response);
+      getCountryInfo(selectedCountryISO2)
+        .then((response) => {
           // the data is returned as an array with 1 elem, assign the first elem as
           // the obj to the countryInfo
           setCountryInfo(response.data[0]);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
+          // no error
+          setError("");
+        })
+        .catch((error) => {
+          setError("Sorry, something went wrong. Please try again later.");
+        });
     }
   }, [selectedCountryISO2]);
 
@@ -122,17 +125,20 @@ function App() {
               fontSize: 18,
             }}
           >
-            <LoadingCountries loadingCountry={loadingCountry} />
+            <ErrorInfo error={error} />
+            <LoadingCountries loadingCountry={loadingCountry} error={error} />
             <CountrySearch
               loadingCountry={loadingCountry}
               countries={countries}
               setSelectedCountry={setSelectedCountry}
               setSelectedCountryISO2={setSelectedCountryISO2}
               setLoadingState={setLoadingState}
+              error={error}
             />
             <LoadingCountryInfo
               loadingState={loadingState}
               selectedCountry={selectedCountry}
+              error={error}
             />
             <CountryInfo
               loadingState={loadingState}
@@ -140,6 +146,7 @@ function App() {
               countryInfo={countryInfo}
               states={states}
               cities={cities}
+              error={error}
             />
           </Box>
         </Container>

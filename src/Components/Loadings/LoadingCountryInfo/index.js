@@ -1,8 +1,12 @@
 import { Typography, Stack, LinearProgress } from "@mui/material";
 
-export default function LoadingCountryInfo({ loadingState, selectedCountry }) {
+export default function LoadingCountryInfo({
+  loadingState,
+  selectedCountry,
+  error,
+}) {
   // if loading and user has selected a country
-  if (!loadingState || selectedCountry === "") return null;
+  if (!loadingState || selectedCountry === "" || error !== "") return null;
   return (
     <Stack
       sx={{ color: "grey.500" }}
