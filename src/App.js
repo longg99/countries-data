@@ -302,7 +302,7 @@ function App() {
               <Box sx={{ fontWeight: "medium" }} marginBottom="1vh">
                 States/Major Cities:
               </Box>
-              <Accordion>
+              <Accordion sx={{ marginBottom: "3vh" }}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
@@ -327,7 +327,7 @@ function App() {
                   All Cities:
                 </Box>
               </Box>{" "}
-              <Accordion>
+              <Accordion sx={{ marginBottom: "4vh" }}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
