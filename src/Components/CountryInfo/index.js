@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FixedSizeList } from "react-window";
-import isEmpty from "lodash";
+import _ from "lodash";
 
 // helper to get the row in the fixed size list
 const Row = (props) => {
@@ -62,11 +62,11 @@ export default function CountryInfo({
   }
   // first check the phone code is empty or not
   // if suffixes are too long, only need root
-  const phoneCode = !isEmpty(countryInfo.idd)
-    ? countryInfo.idd.suffixes.length < 3
-      ? countryInfo.idd.root + countryInfo.idd.suffixes.join("")
-      : countryInfo.idd.root
-    : "N/A";
+  const phoneCode = _.isEmpty(countryInfo["idd"])
+    ? "N/A"
+    : countryInfo.idd.suffixes.length < 3
+    ? countryInfo.idd.root + countryInfo.idd.suffixes.join("")
+    : countryInfo.idd.root;
 
   return (
     <Grid container spacing={0} alignItems="center" justifyContent="center">
