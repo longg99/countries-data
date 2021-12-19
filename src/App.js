@@ -392,6 +392,9 @@ function App() {
                 </AccordionDetails>
               </Accordion>
             </Grid>
+            <Grid item md={12} sm={12} xs={12}>
+              <Box sx={{ minHeight: "10vh" }}></Box>
+            </Grid>
           </Grid>
         </Grid>
       );
