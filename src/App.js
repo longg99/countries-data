@@ -26,6 +26,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import isEmpty from "lodash";
 
 function App() {
   // the list of countries
@@ -202,24 +203,33 @@ function App() {
 
   // render the info for a given country
   const renderCountryInfo = () => {
+    console.log("country info: ", countryInfo);
     if (!loadingState && selectedCountry !== "") {
       const commonName =
-        countryInfo.name.nativeName[Object.keys(countryInfo.name.nativeName)[0]]
-          .common;
+        countryInfo.name.nativeName !== undefined
+          ? countryInfo.name.nativeName[
+              Object.keys(countryInfo.name.nativeName)[0]
+            ].common
+          : countryInfo.name.common;
       const commonOfficial =
-        countryInfo.name.nativeName[Object.keys(countryInfo.name.nativeName)[0]]
-          .official;
+        countryInfo.name.nativeName !== undefined
+          ? countryInfo.name.nativeName[
+              Object.keys(countryInfo.name.nativeName)[0]
+            ].official
+          : countryInfo.name.official;
       const flagImg = countryInfo.flags.svg;
       // all languages of that country
-      const languages = [];
+      let languages = [];
       for (const language in countryInfo.languages) {
         languages.push(countryInfo.languages[language]);
       }
+      // first check the phone code is empty or not
       // if suffixes are too long, only need root
-      const phoneCode =
-        countryInfo.idd.suffixes.length < 3
+      const phoneCode = !isEmpty(countryInfo.idd)
+        ? countryInfo.idd.suffixes.length < 3
           ? countryInfo.idd.root + countryInfo.idd.suffixes.join("")
-          : countryInfo.idd.root;
+          : countryInfo.idd.root
+        : "N/A";
 
       return (
         <Grid container spacing={0} alignItems="center" justifyContent="center">
@@ -276,21 +286,32 @@ function App() {
 
               <p>🌎 Region: {countryInfo.region}</p>
               <p>🌎 Sub Region: {countryInfo.subregion}</p>
-              <p>🏙️ Capital: {countryInfo.capital[0]}</p>
+              <p>
+                🏙️ Capital:{" "}
+                {countryInfo.capital !== undefined
+                  ? countryInfo.capital[0]
+                  : "N/A"}
+              </p>
               <p>
                 🧑🏼‍🤝‍🧑🏾 Population:{" "}
                 {countryInfo.population
                   .toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               </p>
-              <p>🌐 Languages(s): {languages.join(", ")}</p>
+              <p>
+                🌐 Languages(s):{" "}
+                {!(languages.length === 0) ? languages.join(", ") : "N/A"}
+              </p>
               <p>
                 💳 Currency:{" "}
-                {Object.keys(countryInfo.currencies)[0] +
-                  " (" +
-                  countryInfo.currencies[Object.keys(countryInfo.currencies)[0]]
-                    .name +
-                  ")"}
+                {countryInfo.currencies !== undefined
+                  ? Object.keys(countryInfo.currencies)[0] +
+                    " (" +
+                    countryInfo.currencies[
+                      Object.keys(countryInfo.currencies)[0]
+                    ].name +
+                    ")"
+                  : "N/A"}
               </p>
               <p>☎️ Phone code: {phoneCode}</p>
               <p>🕰️ Timezone(s): {countryInfo.timezones.join(", ")}</p>
@@ -311,7 +332,11 @@ function App() {
                   <Typography>List of states</Typography>
                 </AccordionSummary>
                 <AccordionDetails
-                  sx={{ maxHeight: "52vh", overflowY: "scroll" }}
+                  sx={{
+                    maxHeight: "52vh",
+                    overflowY: "scroll",
+                    marginBottom: "3vh",
+                  }}
                 >
                   {states.map((state) => (
                     <Box sx={{ fontWeight: "medium" }} key={state.id}>
@@ -336,7 +361,11 @@ function App() {
                   <Typography>List of cities</Typography>
                 </AccordionSummary>
                 <AccordionDetails
-                  sx={{ maxHeight: "52vh", overflowY: "scroll" }}
+                  sx={{
+                    maxHeight: "52vh",
+                    overflowY: "scroll",
+                    marginBottom: "3vh",
+                  }}
                 >
                   {cities.map((city) => (
                     <Box sx={{ fontWeight: "medium" }} key={city.id}>
