@@ -6,31 +6,14 @@ import {
   getCountryInfo,
   getAllCities,
 } from "./Components/apis";
-import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import { Container, Typography } from "@mui/material";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import CardActions from "@mui/material/CardActions";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import LinearProgress from "@mui/material/LinearProgress";
-import Stack from "@mui/material/Stack";
+import { Container } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import IconButton from "@mui/material/IconButton";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import isEmpty from "lodash";
-import { FixedSizeList } from "react-window";
+import LoadingCountries from "./Components/Loadings/LoadingAllCountries";
+import LoadingCountryInfo from "./Components/Loadings/LoadingCountryInfo";
+import CountryInfo from "./Components/CountryInfo";
+import CountrySearch from "./Components/CountrySearch";
+import ThemeSwitch from "./Components/ThemeSwitch";
 
 function App() {
   // the list of countries
@@ -47,17 +30,8 @@ function App() {
   const [countryInfo, setCountryInfo] = useState({});
   // user's selected ISO2
   const [selectedCountryISO2, setSelectedCountryISO2] = useState("");
-  // for dark/light mode
+  // for dark/light mode, light by default
   const [mode, setMode] = useState("light");
-
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-      },
-    }),
-    []
-  );
 
   const theme = useMemo(
     () =>
@@ -126,281 +100,6 @@ function App() {
     }
   }, [selectedCountryISO2]);
 
-  // render the loading text
-  const renderLoadingCountry = () => {
-    if (loadingCountry)
-      return (
-        <Stack
-          sx={{ color: "grey.500" }}
-          spacing={2}
-          direction="row"
-          marginTop="3vh"
-        >
-          <LinearProgress />
-          <Typography>Please wait, country data is loading...</Typography>
-        </Stack>
-      );
-  };
-
-  const renderLoadingStates = () => {
-    // if loading and user has selected a country
-    if (loadingState && selectedCountry !== "") {
-      return (
-        <Stack
-          sx={{ color: "grey.500" }}
-          spacing={2}
-          direction="column"
-          marginTop="3vh"
-        >
-          <LinearProgress />
-          <Typography>
-            Please wait, loading the information for {selectedCountry}...
-          </Typography>
-        </Stack>
-      );
-    }
-  };
-
-  // render the search box
-  const renderSearchCountry = () => {
-    if (!loadingCountry) {
-      return (
-        <Box>
-          <Typography variant="h5" marginBottom="3vh" textAlign="center">
-            Hi there! Please enter or choose a country to begin.
-          </Typography>
-
-          <Autocomplete
-            id="country-select-demo"
-            onChange={(event, newCountry) => {
-              if (newCountry != null) {
-                // set the new country's data
-                setSelectedCountry(newCountry.name);
-                setSelectedCountryISO2(newCountry.alpha2Code);
-                // show loading text
-                setLoadingState(true);
-              }
-            }}
-            options={countries}
-            autoHighlight
-            getOptionLabel={(option) => option.name}
-            renderOption={(props, option) => (
-              <Box component="li" {...props}>
-                {option.name}
-              </Box>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Choose a country"
-                inputProps={{
-                  ...params.inputProps,
-                  autoComplete: "off", // disable autocomplete and autofill
-                }}
-              />
-            )}
-          />
-        </Box>
-      );
-    }
-  };
-
-  const Row = (props) => {
-    const item = props.data[props.index];
-    return (
-      <ListItem
-        key={props.index}
-        style={props.style}
-        component="div"
-        disablePadding
-      >
-        <ListItemButton>
-          <ListItemText primary={item.name} />
-        </ListItemButton>
-      </ListItem>
-    );
-  };
-
-  // render the info for a given country
-  const renderCountryInfo = () => {
-    if (!loadingState && selectedCountry !== "") {
-      const commonName =
-        countryInfo.name.nativeName !== undefined
-          ? countryInfo.name.nativeName[
-              Object.keys(countryInfo.name.nativeName)[0]
-            ].common
-          : countryInfo.name.common;
-      const commonOfficial =
-        countryInfo.name.nativeName !== undefined
-          ? countryInfo.name.nativeName[
-              Object.keys(countryInfo.name.nativeName)[0]
-            ].official
-          : countryInfo.name.official;
-      const flagImg = countryInfo.flags.svg;
-      // all languages of that country
-      let languages = [];
-      for (const language in countryInfo.languages) {
-        languages.push(countryInfo.languages[language]);
-      }
-      // first check the phone code is empty or not
-      // if suffixes are too long, only need root
-      const phoneCode = !isEmpty(countryInfo.idd)
-        ? countryInfo.idd.suffixes.length < 3
-          ? countryInfo.idd.root + countryInfo.idd.suffixes.join("")
-          : countryInfo.idd.root
-        : "N/A";
-
-      return (
-        <Grid container spacing={0} alignItems="center" justifyContent="center">
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <Typography
-              variant="h4"
-              marginTop="3vh"
-              marginBottom="3vh"
-              textAlign="center"
-            >
-              {countryInfo.name.official}{" "}
-              <span className="flag">{countryInfo.flag}</span>
-            </Typography>
-          </Grid>
-          <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item md={3} sm={6} xs={12} marginBottom="2vh">
-              <Card sx={{ maxWidth: 345 }}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={flagImg}
-                  alt={countryInfo.name.official + " flag"}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {countryInfo.name.official}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    variant="contained"
-                    href={countryInfo.maps.googleMaps}
-                    target="_blank"
-                  >
-                    See on Google Maps
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-            <Grid item md={3} sm={6} xs={12}>
-              <Box sx={{ fontWeight: "medium" }}>Country Information:</Box>
-              <p>
-                <span className="flag">{countryInfo.flag}</span> Official Name:{" "}
-                {countryInfo.name.official}{" "}
-              </p>
-              <p>
-                <span className="flag">{countryInfo.flag}</span> Native name:{" "}
-                {commonName}
-              </p>
-              <p>
-                <span className="flag">{countryInfo.flag}</span> Native official
-                name: {commonOfficial}
-              </p>
-
-              <p>🌎 Region: {countryInfo.region}</p>
-              <p>🌎 Sub Region: {countryInfo.subregion}</p>
-              <p>
-                🏙️ Capital:{" "}
-                {countryInfo.capital !== undefined
-                  ? countryInfo.capital[0]
-                  : "N/A"}
-              </p>
-              <p>
-                🧑🏼‍🤝‍🧑🏾 Population:{" "}
-                {countryInfo.population
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-              </p>
-              <p>
-                🌐 Languages(s):{" "}
-                {!(languages.length === 0) ? languages.join(", ") : "N/A"}
-              </p>
-              <p>
-                💳 Currency:{" "}
-                {countryInfo.currencies !== undefined
-                  ? Object.keys(countryInfo.currencies)[0] +
-                    " (" +
-                    countryInfo.currencies[
-                      Object.keys(countryInfo.currencies)[0]
-                    ].name +
-                    ")"
-                  : "N/A"}
-              </p>
-              <p>☎️ Phone code: {phoneCode}</p>
-              <p>🕰️ Timezone(s): {countryInfo.timezones.join(", ")}</p>
-              <p>🚗 Driving side: {countryInfo.car.side}</p>
-              <p>📅 First day of week: {countryInfo.startOfWeek}</p>
-            </Grid>
-
-            <Grid item md={3} sm={6} xs={12}>
-              <Box sx={{ fontWeight: "medium" }} marginBottom="1vh">
-                States/Major Cities:
-              </Box>
-              <Accordion sx={{ marginBottom: "3vh" }}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography>List of states</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <FixedSizeList
-                    height={400}
-                    width="100%"
-                    itemCount={states.length}
-                    itemSize={40}
-                    itemData={states}
-                    overscanCount={5}
-                  >
-                    {Row}
-                  </FixedSizeList>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-            <Grid item md={3} sm={6} xs={12}>
-              <Box>
-                <Box sx={{ fontWeight: "medium" }} marginBottom="1vh">
-                  All Cities:
-                </Box>
-              </Box>{" "}
-              <Accordion sx={{ marginBottom: "4vh" }}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography>List of cities</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <FixedSizeList
-                    height={400}
-                    width="100%"
-                    itemCount={cities.length}
-                    itemSize={40}
-                    itemData={cities}
-                    overscanCount={5}
-                  >
-                    {Row}
-                  </FixedSizeList>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-            <Grid item md={12} sm={12} xs={12}>
-              <Box sx={{ minHeight: "10vh" }}></Box>
-            </Grid>
-          </Grid>
-        </Grid>
-      );
-    }
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -412,18 +111,7 @@ function App() {
           color: "text.primary",
         }}
       >
-        <IconButton
-          sx={{ ml: 2 }}
-          onClick={colorMode.toggleColorMode}
-          color="inherit"
-        >
-          {theme.palette.mode === "dark" ? (
-            <Brightness7Icon />
-          ) : (
-            <Brightness4Icon />
-          )}
-        </IconButton>
-
+        <ThemeSwitch theme={theme} setMode={setMode} />
         <Container>
           <Box
             sx={{
@@ -434,10 +122,25 @@ function App() {
               fontSize: 18,
             }}
           >
-            {renderLoadingCountry()}
-            {renderSearchCountry()}
-            {renderLoadingStates()}
-            {renderCountryInfo()}
+            <LoadingCountries loadingCountry={loadingCountry} />
+            <CountrySearch
+              loadingCountry={loadingCountry}
+              countries={countries}
+              setSelectedCountry={setSelectedCountry}
+              setSelectedCountryISO2={setSelectedCountryISO2}
+              setLoadingState={setLoadingState}
+            />
+            <LoadingCountryInfo
+              loadingState={loadingState}
+              selectedCountry={selectedCountry}
+            />
+            <CountryInfo
+              loadingState={loadingState}
+              selectedCountry={selectedCountry}
+              countryInfo={countryInfo}
+              states={states}
+              cities={cities}
+            />
           </Box>
         </Container>
       </Box>
