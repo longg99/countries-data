@@ -13,6 +13,8 @@ This app is tested and working on Safari on iOS.
 
 ### Thank you for using the app!
 
+## Other information
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
