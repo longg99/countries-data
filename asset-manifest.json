@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/countries-data/static/css/main.59644336.css",
-    "main.js": "/countries-data/static/js/main.def3a01f.js",
+    "main.js": "/countries-data/static/js/main.5892d92a.js",
     "static/media/NotoColorEmoji.ttf": "/countries-data/static/media/NotoColorEmoji.1d9b9dcd6c97b1912dad.ttf",
     "index.html": "/countries-data/index.html",
     "main.59644336.css.map": "/countries-data/static/css/main.59644336.css.map",
-    "main.def3a01f.js.map": "/countries-data/static/js/main.def3a01f.js.map"
+    "main.5892d92a.js.map": "/countries-data/static/js/main.5892d92a.js.map"
   },
   "entrypoints": [
     "static/css/main.59644336.css",
-    "static/js/main.def3a01f.js"
+    "static/js/main.5892d92a.js"
   ]
 }
