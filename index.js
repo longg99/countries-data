@@ -18,7 +18,7 @@ app.get("/", (request, response, next) => {
   response.json("Hello world!");
 });
 
-app.get("/states/:country", (request, response) => {
+app.get("/states/:country", (request, response, next) => {
   const country = request.params.country;
   // custom options for CountryStateCity API
   const options = {
@@ -43,7 +43,7 @@ app.get("/states/:country", (request, response) => {
     });
 });
 
-app.get("/cities/:country", (request, response) => {
+app.get("/cities/:country", (request, response, next) => {
   const country = request.params.country;
   // custom options for CountryStateCity API
   const options = {
