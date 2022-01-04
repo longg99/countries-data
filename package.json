@@ -33,7 +33,7 @@
     "start:backend": "nodemon index.js",
     "start:frontend": "react-scripts start",
     "start": "nodemon index.js",
-    "heroku-postbuild": "yarn && yarn run build",
+    "heroku-postbuild": "yarn install && yarn run build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
