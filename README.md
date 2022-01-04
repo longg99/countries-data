@@ -7,7 +7,7 @@
 This is a simple project built with ReactJS, JS and MaterialUI (MUI). The purpose of it is to allow the user to query data about a country, such 
 as native name, currency, population, list of states and cities and many more. This app fetches data from 2 APIs, https://restcountries.com/ and https://countrystatecity.in/. Huge thanks to the developers of these awesome APIs!
 
-I have also added a mini backend with ExpressJS to call the API from there. 
+I have also added a mini backend with Express to call the API from there. 
 
 ### Dark/Light Mode
 This app has a function to switch between dark and light modes. Look for a button on the top left corner to try it!
