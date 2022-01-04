@@ -8,7 +8,7 @@ export const getAllCountries = async () =>
 // get all states, given a country using our backend
 export const getAllStates = async (country) =>
   // pass the option param
-  await axios.get(`http://localhost:8000/states/${country}`);
+  await axios.get(`/states/${country}`);
 
 // get the information of a given country
 export const getCountryInfo = async (country) =>
@@ -17,4 +17,4 @@ export const getCountryInfo = async (country) =>
 // get all cities from our backend
 export const getAllCities = async (country) =>
   // pass the option param
-  await axios.get(`http://localhost:8000/cities/${country}`);
+  await axios.get(`/cities/${country}`);
