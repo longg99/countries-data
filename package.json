@@ -30,7 +30,7 @@
   "scripts": {
     "start:backend": "nodemon index.js",
     "start:frontend": "react-scripts start",
-    "start": "concurrently \"react-scripts start\" \"nodemon index.js\"",
+    "start": "nodemon index.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
