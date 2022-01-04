@@ -27,6 +27,7 @@
   "engines": {
     "node": "14.17.5"
   },
+  "proxy": "http://localhost:8000",
   "scripts": {
     "start:backend": "nodemon index.js",
     "start:frontend": "react-scripts start",
