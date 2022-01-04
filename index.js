@@ -16,7 +16,7 @@ const app = express();
 // use cors
 app.use(cors());
 
-app.use(express.static(path.join(__dirname, "/build")));
+app.use(express.static(path.join(__dirname, "./build")));
 
 app.get("/", (request, response, next) => {
   response.json("Hello world!");
@@ -73,7 +73,7 @@ app.get("/cities/:country", (request, response, next) => {
 });
 
 app.get("*", (request, response) => {
-  response.sendFile(path.join(__dirname, "/build", "index.html"));
+  response.sendFile(path.join(__dirname, "./build/index.html"));
 });
 
 // listen to the changes

@@ -32,7 +32,7 @@
   "scripts": {
     "start:backend": "nodemon index.js",
     "start:frontend": "react-scripts start",
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "heroku-postbuild": "yarn install && yarn run build",
     "build": "react-scripts build",
     "test": "react-scripts test",
