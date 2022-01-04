@@ -24,6 +24,9 @@
     "react-window": "^1.8.6",
     "web-vitals": "^2.1.2"
   },
+  "engines": {
+    "node": "14.17.5"
+  },
   "scripts": {
     "start:backend": "nodemon index.js",
     "start:frontend": "react-scripts start",
