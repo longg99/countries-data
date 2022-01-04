@@ -73,7 +73,7 @@ app.get("/cities/:country", (request, response, next) => {
 });
 
 app.get("*", (request, response) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+  response.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 // listen to the changes
