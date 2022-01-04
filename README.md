@@ -1,6 +1,9 @@
 # Countries Data React App
 
-### Live Demo: https://longg99.github.io/countries-data/
+### Live Demo: 
+GH Page: https://longg99.github.io/countries-data/
+
+Heroku: https://countries-data-123.herokuapp.com/
 
 ### Introduction
 
