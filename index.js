@@ -7,6 +7,8 @@ const PORT = process.env.PORT | 8000;
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const path = require("path");
+
 // read from .env file
 require("dotenv").config({ path: "./.env" });
 
