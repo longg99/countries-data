@@ -3,7 +3,7 @@
 // dotenv (loads var from .env) and axios
 
 // listen on port 8000
-const PORT = process.env.PORT | 8000;
+const PORT = process.env.PORT || 8000;
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");

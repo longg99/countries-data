@@ -25,7 +25,8 @@
     "web-vitals": "^2.1.2"
   },
   "engines": {
-    "node": "14.17.5"
+    "node": "14.17.5",
+    "yarn": "1.22.17"
   },
   "proxy": "http://localhost:8000",
   "scripts": {
